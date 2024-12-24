@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import model.exceptions.DomainException;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,7 +22,11 @@ public class Reservation {
 
     private static DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) {
+    public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        if (!checkOut.isAfter(checkIn)) {
+            throw new DomainException("Error in reservation checkout date must be after checkin date");
+        }
+        
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
@@ -47,19 +52,18 @@ public class Reservation {
         return ChronoUnit.DAYS.between(checkIn, checkOut);
     }
 
-    public String updateDates(LocalDate checkIn, LocalDate checkOut) {
+    public void updateDates(LocalDate checkIn, LocalDate checkOut) throws DomainException {
         LocalDate now = LocalDate.now();
         if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
-            return "Reservation dates must be in the future";
+            throw new DomainException("Reservation dates must be in the future");
         } 
         
         if (!checkOut.isAfter(checkIn)) {
-            return "Error in reservation checkout date must be after checkin date";
+            throw new DomainException("Error in reservation checkout date must be after checkin date");
         }
 
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        return null;
     }
 
     @Override
