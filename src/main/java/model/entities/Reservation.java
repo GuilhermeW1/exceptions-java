@@ -9,18 +9,18 @@ import java.time.temporal.ChronoUnit;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author guilherme
  */
 public class Reservation {
+
     private Integer roomNumber;
     private LocalDate checkIn;
     private LocalDate checkOut;
-    
+
     private static DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    
+
     public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) {
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
@@ -46,12 +46,22 @@ public class Reservation {
     public long duration() {
         return ChronoUnit.DAYS.between(checkIn, checkOut);
     }
-    
-    public void updateDates(LocalDate checkIn, LocalDate checkOut) {
+
+    public String updateDates(LocalDate checkIn, LocalDate checkOut) {
+        LocalDate now = LocalDate.now();
+        if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
+            return "Reservation dates must be in the future";
+        } 
+        
+        if (!checkOut.isAfter(checkIn)) {
+            return "Error in reservation checkout date must be after checkin date";
+        }
+
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+        return null;
     }
-    
+
     @Override
     public String toString() {
         return "Room "
